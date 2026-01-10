@@ -618,7 +618,7 @@ ${p.options ? `
       dlg.showModal();
     });
 
-    btnSubmit.addEventListener("click", async (e)=>{
+    btnSubmit.addEventListener("click", async (e)=> {
   e.preventDefault();
 
   const orderText = buildOrderText();
@@ -630,24 +630,32 @@ ${p.options ? `
     note: studentNote.value.trim(),
     spent: cartTotal(),
     remaining: remainingPoints(),
-    orderText: orderText,
+    orderText,
     time: new Date().toLocaleString()
   };
 
-  try{
+  try {
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
+      mode: "cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
-    const result = await res.json().catch(()=>({}));
+    const text = await res.text(); // ✅ 关键：先拿原文
+    let result;
+    try { result = JSON.parse(text); } catch { result = { raw: text }; }
 
-    if(!res.ok || result.ok === false){
-      throw new Error(result.error || "提交失败");
+    // ✅ 关键：把真实回传直接显示
+    alert(
+      "HTTP: " + res.status + "\n\n" +
+      "Response:\n" + text
+    );
+
+    if (!res.ok || result.ok === false) {
+      throw new Error(result.error || ("提交失败 HTTP " + res.status));
     }
 
-    // ✅ 成功后才做这些
     state.lastOrderText = orderText;
     save();
     dlg.close();
@@ -657,9 +665,8 @@ ${p.options ? `
     state.cart.clear();
     renderAll();
 
-  }catch(err){
-    console.error(err);
-    showToast("❌ 提交失败，请检查 Google Sheet / 权限");
+  } catch (err) {
+    alert("前端抓到错误：\n" + err.message);
   }
 });
 

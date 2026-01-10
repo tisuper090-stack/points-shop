@@ -252,6 +252,8 @@
   </dialog>
 
   <script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzoV9XdlOcXpq_xlztkQesqQMzABwRJ0AZlFMk1QqTeijNDHlm6nYR3KaGc1-fmS8H3/exec";
+
     // ====== 1) 商品清单：你可以在这里修改（图片统一放 Desktop/images/） ======
     // 规则：index.html 在 Desktop；图片在 Desktop/images/
     const PRODUCTS = [
@@ -616,17 +618,51 @@ ${p.options ? `
       dlg.showModal();
     });
 
-    btnSubmit.addEventListener("click", (e)=>{
-      e.preventDefault();
-      state.lastOrderText = buildOrderText();
-      save();
-      dlg.close();
-      showToast("订单已提交 ✅（已生成订单摘要）");
-      btnCopy.disabled = false;
+    btnSubmit.addEventListener("click", async (e)=>{
+  e.preventDefault();
 
-      state.cart.clear();
-      renderAll();
+  const orderText = buildOrderText();
+
+  const payload = {
+    name: studentName.value.trim(),
+    level: studentLevel.value,
+    points: getStudentPoints(),
+    note: studentNote.value.trim(),
+    spent: cartTotal(),
+    remaining: remainingPoints(),
+    orderText: orderText,
+    time: new Date().toLocaleString()
+  };
+
+  try{
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
+
+    const result = await res.json().catch(()=>({}));
+
+    if(!res.ok || result.ok === false){
+      throw new Error(result.error || "提交失败");
+    }
+
+    // ✅ 成功后才做这些
+    state.lastOrderText = orderText;
+    save();
+    dlg.close();
+    showToast("✅ 已提交到 Google 表格！");
+    btnCopy.disabled = false;
+
+    state.cart.clear();
+    renderAll();
+
+  }catch(err){
+    console.error(err);
+    showToast("❌ 提交失败，请检查 Google Sheet / 权限");
+  }
+});
+
 
     btnCopy.addEventListener("click", async ()=>{
       if(!state.lastOrderText) return;

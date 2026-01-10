@@ -130,7 +130,7 @@
          style="height:80px; margin-bottom:8px;">
          
     <h1>🎁 2025 MEMBERS DAY </h1>
-    <div class="sub">学生输入资料 → 选择商品 → 购物车 → 提交前确认订单</div>
+    <div class="sub">输入你的资料 → 选择商品 → 购物车 → 提交前确认订单</div>
   </div>
   <div class="pill">SUPER MODERN EDUCATION GROUP</div>
 </header>
@@ -161,7 +161,7 @@
           </div>
           <div>
             <label>备注（可选）</label>
-            <input id="studentNote" placeholder="例如：生日奖励 / 期末奖励…" />
+            <input id="studentNote" placeholder="例如：有需要才填…" />
           </div>
         </div>
 
@@ -197,8 +197,7 @@
 
         <p class="note" style="margin-top:12px">
           ✅ 规则：<b>选的商品总积分不能超过自己的积分</b>。<br/>
-          ✅ 你可以改商品名称/积分价格：在代码里找到 <b>PRODUCTS</b> 列表修改即可。
-        </p>
+      </p>
       </section>
 
       <aside class="card">
@@ -226,8 +225,7 @@
         </div>
 
         <p class="note" style="margin-top:10px">
-          🔐 小提醒：这是单机版（适合先快速用）。如果你要“多学生+老师后台+库存管理+导出Excel”，我也可以帮你升级成可登录的版本。
-        </p>
+         </p>
       </aside>
     </div>
   </div>
@@ -436,7 +434,7 @@ ${p.options ? `
       if(items.length === 0){
         const empty = document.createElement("div");
         empty.className = "note";
-        empty.textContent = "购物车还是空的～去左边选个礼物吧 🎁";
+        empty.textContent = "购物车还是空的～快去选个礼物吧 🎁";
         cartEl.appendChild(empty);
         return;
       }
@@ -619,3 +617,4 @@ ${p.options ? `
   </script>
 </body>
 </html>
+

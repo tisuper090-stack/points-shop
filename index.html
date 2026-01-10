@@ -255,12 +255,12 @@
     // ====== 1) 商品清单：你可以在这里修改（图片统一放 Desktop/images/） ======
     // 规则：index.html 在 Desktop；图片在 Desktop/images/
     const PRODUCTS = [
- { id:"p1", name:"✏️ 文具礼包", cost:30,img: "./images/stationery.jpg",options: ["笔", "尺", "橡皮擦"]},
- { id:"p2", name:"👔现代潮服", cost:250,img:"./images/现代潮服.png" },
- { id:"p3", name:"💫独家现代帆布袋", cost:250,img:"./images/独家现代帆布袋.png" },
- { id:"p4", name:"🔅简约帆布袋", cost:250,img:"./images/简约帆布包.png" },
- { id:"p5", name:"🍜酸辣粉", cost:200,img:"./images/酸辣粉.png" },
- { id:"p6", name:"🍜螺蛳粉", cost:200,img:"./images/螺蛳粉.png" },
+ { id:"p1", name:"✏️ 文具礼包", cost:30,img: "images/stationery.jpg",options: ["笔", "尺", "橡皮擦"]},
+ { id:"p2", name:"👔现代潮服", cost:250,img:"images/现代潮服.png" },
+ { id:"p3", name:"💫独家现代帆布袋", cost:250,img:"images/独家现代帆布袋.png" },
+ { id:"p4", name:"🔅简约帆布袋", cost:250,img:"images/简约帆布包.png" },
+ { id:"p5", name:"🍜酸辣粉", cost:200,img:"images/酸辣粉.png" },
+ { id:"p6", name:"🍜螺蛳粉", cost:200,img:"images/螺蛳粉.png" },
   ];
 
 
@@ -372,9 +372,10 @@
         // ✅ 注意：只有这一段模板（之前你多贴了一段导致 JS 炸掉）
         card.innerHTML = `
           <div style="display:flex; gap:12px; align-items:center">
-            <img src="${p.img || ''}" alt=""
-              style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:rgba(0,0,0,.2)"
-              onerror="this.style.display='none'">
+            <img src="${p.img ? encodeURI(p.img) : ''}" alt=""
+  style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:rgba(0,0,0,.2)"
+  onerror="this.src='./images/placeholder.png'">
+
             <div style="flex:1">
               <div class="name">${p.name}</div>
               <div class="meta">
@@ -621,3 +622,4 @@ ${p.options ? `
   </script>
 </body>
 </html>
+

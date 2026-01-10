@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MEMBERS DAY（2025）</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#101a33; --card2:#0f1730; --text:#eef3ff; --muted:#a9b4d0;
+      --line:rgba(255,255,255,.10); --ok:#34d399; --warn:#fbbf24; --bad:#fb7185; --btn:#3b82f6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial;
+      background: radial-gradient(1200px 800px at 10% 10%, #1b2a57 0%, var(--bg) 55%);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:24px}
+    header{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+    h1{margin:0; font-size:22px; letter-spacing:.3px}
+    .sub{color:var(--muted); font-size:13px}
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; margin-top:16px}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width:520px){ .row{grid-template-columns:1fr} }
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input, select, textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      color:var(--text);
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{border-color: rgba(59,130,246,.7); box-shadow: 0 0 0 3px rgba(59,130,246,.18)}
+    .kpis{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:12px}
+    @media (max-width:520px){ .kpis{grid-template-columns:1fr} }
+    .kpi{
+      padding:12px; border-radius:14px; background: rgba(0,0,0,.18);
+      border:1px solid var(--line);
+    }
+    .kpi .t{font-size:12px; color:var(--muted)}
+    .kpi .v{font-size:18px; margin-top:6px}
+    .v.ok{color:var(--ok)} .v.bad{color:var(--bad)} .v.warn{color:var(--warn)}
+    .toolbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      border:0; border-radius:12px; padding:10px 12px; cursor:pointer; color:white;
+      background: var(--btn);
+    }
+    button.secondary{background: rgba(255,255,255,.12)}
+    button.danger{background: rgba(251,113,133,.85)}
+    button:disabled{opacity:.45; cursor:not-allowed}
+    .section-title{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0 10px}
+    .section-title h2{margin:0; font-size:15px}
+    .pill{font-size:12px; color:var(--muted); border:1px solid var(--line); padding:6px 10px; border-radius:999px}
+    .products{display:grid; grid-template-columns: repeat(2, 1fr); gap:10px}
+    @media (max-width:520px){ .products{grid-template-columns:1fr} }
+    .prod{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(0,0,0,.18);
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .prod .name{font-weight:600}
+    .prod .meta{display:flex; justify-content:space-between; color:var(--muted); font-size:12px}
+    .prod .actions{display:flex; gap:8px; align-items:center}
+    .qty{
+      width:70px;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      color:var(--text);
+    }
+    .cart{display:flex; flex-direction:column; gap:10px;}
+    .cart-item{
+      display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+      padding:10px 12px; border:1px solid var(--line); border-radius:14px; background: rgba(0,0,0,.18);
+    }
+    .cart-item .left{flex:1}
+    .cart-item .small{color:var(--muted); font-size:12px; margin-top:4px}
+    .cart-item .right{text-align:right}
+    .cart-item .rm{color:var(--muted); font-size:12px}
+    .cart-item .remove{margin-top:6px; background: rgba(255,255,255,.12)}
+    .note{color:var(--muted); font-size:12px; line-height:1.45}
+    .divider{height:1px; background:var(--line); margin:12px 0}
+    .toast{
+      position: fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background: rgba(0,0,0,.75);
+      border:1px solid rgba(255,255,255,.18);
+      padding:10px 12px; border-radius:999px; color:var(--text);
+      font-size:13px; display:none; z-index:99;
+      max-width: calc(100% - 24px);
+    }
+    dialog{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      color:var(--text);
+      width:min(720px, calc(100% - 24px));
+      box-shadow: 0 20px 80px rgba(0,0,0,.45);
+    }
+    dialog::backdrop{background: rgba(0,0,0,.55)}
+    .modal-head{display:flex; justify-content:space-between; align-items:center; gap:10px}
+    .modal-head h3{margin:0; font-size:16px}
+    .modal-body{margin-top:10px}
+    .summary{
+      border:1px solid var(--line); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px; white-space:pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+  <div>
+    <img src="./images/logo.png" 
+         alt="补习中心 Logo"
+         style="height:80px; margin-bottom:8px;">
+         
+    <h1>🎁 2025 MEMBERS DAY </h1>
+    <div class="sub">学生输入资料 → 选择商品 → 购物车 → 提交前确认订单</div>
+  </div>
+  <div class="pill">SUPER MODERN EDUCATION GROUP</div>
+</header>
+
+
+    <div class="grid">
+      <section class="card">
+        <div class="section-title">
+          <h2>👩‍🎓 学生资料</h2>
+          <span class="pill">必填：名字 / 年级(2025) / 积分</span>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>学生名字</label>
+            <input id="studentName" placeholder="例如：Ali / Siti / Jason / 小明" />
+          </div>
+          <div>
+            <label>年级 / FORM（2025）</label>
+            <select id="studentLevel"></select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label>积分分数</label>
+            <input id="studentPoints" type="number" min="0" step="1" placeholder="例如：120" />
+          </div>
+          <div>
+            <label>备注（可选）</label>
+            <input id="studentNote" placeholder="例如：生日奖励 / 期末奖励…" />
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t">可用积分</div>
+            <div class="v ok" id="kpiAvailable">0</div>
+          </div>
+          <div class="kpi">
+            <div class="t">已选商品总积分</div>
+            <div class="v" id="kpiSpent">0</div>
+          </div>
+          <div class="kpi">
+            <div class="t">选择后剩余积分</div>
+            <div class="v" id="kpiRemaining">0</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="secondary" id="btnSave">💾 保存学生资料</button>
+          <button class="secondary" id="btnLoad">📥 读取上次资料</button>
+          <button class="danger" id="btnReset">🧹 清空全部</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">
+          <h2>🛍️ 兑换商品选项</h2>
+          <span class="pill" id="prodHint">点“加入购物车”</span>
+        </div>
+
+        <div class="products" id="productList"></div>
+
+        <p class="note" style="margin-top:12px">
+          ✅ 规则：<b>选的商品总积分不能超过自己的积分</b>。<br/>
+          ✅ 你可以改商品名称/积分价格：在代码里找到 <b>PRODUCTS</b> 列表修改即可。
+        </p>
+      </section>
+
+      <aside class="card">
+        <div class="section-title">
+          <h2>🧺 购物车</h2>
+          <span class="pill" id="cartCount">0 件</span>
+        </div>
+
+        <div class="cart" id="cart"></div>
+
+        <div class="divider"></div>
+
+        <div class="kpis" style="grid-template-columns:1fr">
+          <div class="kpi">
+            <div class="t">提交前确认订单</div>
+            <div class="note" style="margin-top:6px">
+              点击下方「确认订单」会弹出确认窗口。确认无误后才能提交。
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-top:12px">
+          <button id="btnReview">✅ 确认订单</button>
+          <button class="secondary" id="btnCopy" disabled>📋 复制订单摘要</button>
+        </div>
+
+        <p class="note" style="margin-top:10px">
+          🔐 小提醒：这是单机版（适合先快速用）。如果你要“多学生+老师后台+库存管理+导出Excel”，我也可以帮你升级成可登录的版本。
+        </p>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <dialog id="dlg">
+    <form method="dialog">
+      <div class="modal-head">
+        <h3>🧾 请确认订单</h3>
+        <button class="secondary" value="cancel">✖ 关闭</button>
+      </div>
+      <div class="modal-body">
+        <div class="note" id="confirmMeta"></div>
+        <div class="divider"></div>
+        <div class="summary" id="confirmSummary"></div>
+        <div class="divider"></div>
+        <div class="toolbar">
+          <button id="btnSubmit" value="default">🚀 提交订单</button>
+          <button class="secondary" value="cancel">返回修改</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // ====== 1) 商品清单：你可以在这里修改（图片统一放 Desktop/images/） ======
+    // 规则：index.html 在 Desktop；图片在 Desktop/images/
+    const PRODUCTS = [
+  { id:"p1", name:"✏️ 文具礼包", cost:30, category:"文具", img: "./images/stationery.jpg",options: ["笔", "尺", "橡皮擦"]}
+  ];
+
+
+    // ====== 2) 年级/FORM（注明2025） ======
+    const LEVELS_2025 = [
+      "2025｜Form 1", "2025｜Form 2", "2025｜Form 3",
+      "2025｜Form 4", "2025｜Form 5",
+    ];
+
+    // ====== 3) 状态 ======
+    const state = {
+      student: { name:"", level: LEVELS_2025[0], points: 0, note:"" },
+      cart: new Map(), // id -> qty
+      lastOrderText: ""
+    };
+
+    // ====== 4) DOM ======
+    const $ = (id) => document.getElementById(id);
+    const studentName = $("studentName");
+    const studentLevel = $("studentLevel");
+    const studentPoints = $("studentPoints");
+    const studentNote = $("studentNote");
+
+    const kpiAvailable = $("kpiAvailable");
+    const kpiSpent = $("kpiSpent");
+    const kpiRemaining = $("kpiRemaining");
+
+    const productList = $("productList");
+    const cartEl = $("cart");
+    const cartCount = $("cartCount");
+
+    const btnSave = $("btnSave");
+    const btnLoad = $("btnLoad");
+    const btnReset = $("btnReset");
+    const btnReview = $("btnReview");
+    const btnCopy = $("btnCopy");
+
+    const dlg = $("dlg");
+    const confirmMeta = $("confirmMeta");
+    const confirmSummary = $("confirmSummary");
+    const btnSubmit = $("btnSubmit");
+
+    const toast = $("toast");
+
+    // ====== helpers ======
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toast.style.display="none", 2200);
+    }
+
+    function money(n){ return Number(n||0).toString(); }
+
+    function getStudentPoints(){
+      const v = Number(studentPoints.value);
+      return Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0;
+    }
+
+    function cartItems(){
+      const items = [];
+      for(const [id, qty] of state.cart.entries()){
+        const p = PRODUCTS.find(x=>x.id===id);
+        if(!p) continue;
+        items.push({ ...p, qty, subtotal: p.cost * qty });
+      }
+      return items;
+    }
+
+    function cartTotal(){
+      return cartItems().reduce((s,it)=> s + it.subtotal, 0);
+    }
+
+    function remainingPoints(){
+      return getStudentPoints() - cartTotal();
+    }
+
+    function validateStudent(){
+      const name = studentName.value.trim();
+      const pts = getStudentPoints();
+      if(!name) return { ok:false, msg:"请先填写学生名字。" };
+      if(!studentLevel.value) return { ok:false, msg:"请选择年级/FORM（2025）。" };
+      if(pts <= 0) return { ok:false, msg:"积分分数需要大于 0。" };
+      return { ok:true };
+    }
+
+    function canAdd(cost, qtyToAdd){
+      const newTotal = cartTotal() + cost * qtyToAdd;
+      return newTotal <= getStudentPoints();
+    }
+
+    // ====== render ======
+    function renderLevels(){
+      studentLevel.innerHTML = "";
+      LEVELS_2025.forEach(l=>{
+        const opt = document.createElement("option");
+        opt.value = l; opt.textContent = l;
+        studentLevel.appendChild(opt);
+      });
+      studentLevel.value = state.student.level;
+    }
+
+    function renderProducts(){
+      productList.innerHTML = "";
+      PRODUCTS.forEach(p=>{
+        const card = document.createElement("div");
+        card.className = "prod";
+
+        // ✅ 注意：只有这一段模板（之前你多贴了一段导致 JS 炸掉）
+        card.innerHTML = `
+          <div style="display:flex; gap:12px; align-items:center">
+            <img src="${p.img || ''}" alt=""
+              style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:rgba(0,0,0,.2)"
+              onerror="this.style.display='none'">
+            <div style="flex:1">
+              <div class="name">${p.name}</div>
+              <div class="meta">
+                <span>分类：${p.category || '-'}</span>
+                <span><b>${money(p.cost)}</b> pts</span>
+              </div> 
+${p.options ? `
+  <select class="optionSelect" style="
+    margin-top:6px;
+    width:100%;
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.2);
+    color:var(--text);
+  ">
+    <option value="">请选择内容</option>
+    ${p.options.map(o => `<option value="${o}">${o}</option>`).join("")}
+  </select>
+` : ""}
+
+            </div>
+          </div>
+
+          <div class="actions">
+            <input class="qty" type="number" min="1" step="1" value="1" aria-label="数量" />
+            <button type="button">➕ 加入购物车</button>
+          </div>
+
+          <div class="note">提示：总积分不能超过你的积分。</div>
+        `;
+
+        const qtyInput = card.querySelector("input.qty");
+        const addBtn = card.querySelector("button");
+
+        addBtn.addEventListener("click", ()=>{
+          const v = Math.max(1, Math.floor(Number(qtyInput.value || 1)));
+          qtyInput.value = v;
+
+          const vStudent = validateStudent();
+          if(!vStudent.ok){ showToast(vStudent.msg); return; }
+
+          if(!canAdd(p.cost, v)){
+            showToast(`积分不够：加入后会超出（剩余 ${money(remainingPoints())} pts）。`);
+            return;
+          }
+
+          state.cart.set(p.id, (state.cart.get(p.id) || 0) + v);
+          renderAll();
+          showToast("已加入购物车 ✅");
+        });
+
+        productList.appendChild(card);
+      });
+    }
+
+    function renderCart(){
+      cartEl.innerHTML = "";
+      const items = cartItems();
+      cartCount.textContent = `${items.length} 种`;
+
+      if(items.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "note";
+        empty.textContent = "购物车还是空的～去左边选个礼物吧 🎁";
+        cartEl.appendChild(empty);
+        return;
+      }
+
+      items.forEach(it=>{
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML = `
+          <div class="left">
+            <div><b>${it.name}</b></div>
+            <div class="small">单价：${money(it.cost)} pts｜数量：${money(it.qty)}</div>
+          </div>
+          <div class="right">
+            <div><b>${money(it.subtotal)}</b> <span class="rm">pts</span></div>
+            <button class="remove secondary" type="button">🗑️ 移除</button>
+          </div>
+        `;
+        row.querySelector("button.remove").addEventListener("click", ()=>{
+          state.cart.delete(it.id);
+          renderAll();
+          showToast("已移除 🧹");
+        });
+        cartEl.appendChild(row);
+      });
+    }
+
+    function renderKPIs(){
+      const pts = getStudentPoints();
+      const spent = cartTotal();
+      const rem = pts - spent;
+
+      kpiAvailable.textContent = money(pts);
+      kpiSpent.textContent = money(spent);
+
+      kpiRemaining.textContent = money(rem);
+      kpiRemaining.classList.remove("ok","warn","bad");
+      if(rem >= 0) kpiRemaining.classList.add(rem === 0 ? "warn" : "ok");
+      else kpiRemaining.classList.add("bad");
+
+      btnReview.disabled = !(validateStudent().ok) || cartItems().length === 0 || rem < 0;
+    }
+
+    function renderAll(){
+      renderKPIs();
+      renderCart();
+      btnCopy.disabled = !state.lastOrderText;
+    }
+
+    // ====== storage ======
+    const STORAGE_KEY = "points_shop_2025_v1";
+
+    function save(){
+      const payload = {
+        student: {
+          name: studentName.value.trim(),
+          level: studentLevel.value,
+          points: getStudentPoints(),
+          note: studentNote.value.trim(),
+        },
+        cart: Array.from(state.cart.entries()),
+        lastOrderText: state.lastOrderText
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      showToast("已保存 ✅");
+    }
+
+    function load(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw){ showToast("没有找到上次资料"); return; }
+      try{
+        const payload = JSON.parse(raw);
+        studentName.value = payload.student?.name || "";
+        studentLevel.value = payload.student?.level || LEVELS_2025[0];
+        studentPoints.value = payload.student?.points ?? 0;
+        studentNote.value = payload.student?.note || "";
+        state.cart = new Map(payload.cart || []);
+        state.lastOrderText = payload.lastOrderText || "";
+        renderAll();
+        showToast("已读取 ✅");
+      }catch{
+        showToast("读取失败：资料格式错误");
+      }
+    }
+
+    function resetAll(){
+      studentName.value = "";
+      studentLevel.value = LEVELS_2025[0];
+      studentPoints.value = "";
+      studentNote.value = "";
+      state.cart.clear();
+      state.lastOrderText = "";
+      localStorage.removeItem(STORAGE_KEY);
+      renderAll();
+      showToast("已清空 ✅");
+    }
+
+    // ====== confirm & submit ======
+    function buildOrderText(){
+      const name = studentName.value.trim();
+      const level = studentLevel.value;
+      const pts = getStudentPoints();
+      const note = studentNote.value.trim();
+      const items = cartItems();
+
+      const spent = cartTotal();
+      const rem = pts - spent;
+
+      const lines = [];
+      lines.push("=== 积分兑换订单（2025）===");
+      lines.push(`学生：${name}`);
+      lines.push(`年级/FORM：${level}`);
+      lines.push(`积分：${pts} pts`);
+      if(note) lines.push(`备注：${note}`);
+      lines.push("");
+      lines.push("【商品】");
+      items.forEach((it, idx)=>{
+        lines.push(`${idx+1}. ${it.name}  x${it.qty}  = ${it.subtotal} pts`);
+      });
+      lines.push("");
+      lines.push(`总计：${spent} pts`);
+      lines.push(`剩余：${rem} pts`);
+      lines.push(`提交时间：${new Date().toLocaleString()}`);
+      return lines.join("\n");
+    }
+
+    btnReview.addEventListener("click", ()=>{
+      const v = validateStudent();
+      if(!v.ok){ showToast(v.msg); return; }
+      if(cartItems().length === 0){ showToast("购物车是空的"); return; }
+      if(remainingPoints() < 0){ showToast("积分不足，请删除部分商品"); return; }
+
+      const spent = cartTotal();
+      const rem = remainingPoints();
+      confirmMeta.innerHTML = `
+        <b>${studentName.value.trim()}</b>（${studentLevel.value}）｜
+        可用 <b>${money(getStudentPoints())}</b> pts｜
+        本次兑换 <b>${money(spent)}</b> pts｜
+        剩余 <b>${money(rem)}</b> pts
+      `;
+      confirmSummary.textContent = buildOrderText();
+      dlg.showModal();
+    });
+
+    btnSubmit.addEventListener("click", (e)=>{
+      e.preventDefault();
+      state.lastOrderText = buildOrderText();
+      save();
+      dlg.close();
+      showToast("订单已提交 ✅（已生成订单摘要）");
+      btnCopy.disabled = false;
+
+      state.cart.clear();
+      renderAll();
+    });
+
+    btnCopy.addEventListener("click", async ()=>{
+      if(!state.lastOrderText) return;
+      try{
+        await navigator.clipboard.writeText(state.lastOrderText);
+        showToast("已复制到剪贴板 📋");
+      }catch{
+        showToast("复制失败：你的浏览器可能不支持");
+      }
+    });
+
+    // ====== input listeners ======
+    [studentName, studentLevel, studentPoints, studentNote].forEach(el=>{
+      el.addEventListener("input", ()=> renderKPIs());
+      el.addEventListener("change", ()=> renderKPIs());
+    });
+
+    btnSave.addEventListener("click", save);
+    btnLoad.addEventListener("click", load);
+    btnReset.addEventListener("click", resetAll);
+
+    // ====== init ======
+    renderLevels();
+    renderProducts();
+    renderAll();
+  </script>
+</body>
+</html>

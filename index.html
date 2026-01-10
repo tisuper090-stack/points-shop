@@ -252,7 +252,7 @@
   </dialog>
 
   <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm-vj7MFUlQtGTN1SymIqgXwpW2SqMrxA4qMl3ApvmW3eNOTPa-SPQlqEI3ksHt_-9/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRCK6_hyca0G0infc1wzprZyzLP0h-8hddLVAxaw_LzpsAv7ZpQzPWIrBbRYfOvskJ/exec";
 
     // ====== 1) 商品清单：你可以在这里修改（图片统一放 Desktop/images/） ======
     // 规则：index.html 在 Desktop；图片在 Desktop/images/
@@ -618,43 +618,36 @@ ${p.options ? `
       dlg.showModal();
     });
 
-    btnSubmit.addEventListener("click", async (e)=> {
+    btnSubmit.addEventListener("click", async (e) => {
   e.preventDefault();
 
   const orderText = buildOrderText();
 
   const payload = {
+    time: new Date().toLocaleString(),
     name: studentName.value.trim(),
     level: studentLevel.value,
     points: getStudentPoints(),
     note: studentNote.value.trim(),
     spent: cartTotal(),
     remaining: remainingPoints(),
-    orderText,
-    time: new Date().toLocaleString()
+    orderText
   };
 
   try {
+    // ✅ 用表单格式送（不会触发 CORS 预检）
+    const formBody = new URLSearchParams(payload).toString();
+
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: formBody
+      // ❌ 不要 headers，不要 application/json
     });
 
-    const text = await res.text(); // ✅ 关键：先拿原文
-    let result;
-    try { result = JSON.parse(text); } catch { result = { raw: text }; }
+    const text = await res.text();       // 先拿文本
+    const result = JSON.parse(text);     // 再转 JSON
 
-    // ✅ 关键：把真实回传直接显示
-    alert(
-      "HTTP: " + res.status + "\n\n" +
-      "Response:\n" + text
-    );
-
-    if (!res.ok || result.ok === false) {
-      throw new Error(result.error || ("提交失败 HTTP " + res.status));
-    }
+    if (!result.ok) throw new Error(result.error || "提交失败");
 
     state.lastOrderText = orderText;
     save();
@@ -666,7 +659,8 @@ ${p.options ? `
     renderAll();
 
   } catch (err) {
-    alert("前端抓到错误：\n" + err.message);
+    console.error(err);
+    showToast("❌ 提交失败：" + (err.message || err));
   }
 });
 

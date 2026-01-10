@@ -319,6 +319,11 @@
       const v = Number(studentPoints.value);
       return Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0;
     }
+// 
+function safeImg(src){
+  if(!src) return "";
+  return src.split("/").map(encodeURIComponent).join("/");
+}
 
     function cartItems(){
       const items = [];
@@ -372,10 +377,11 @@
         // ✅ 注意：只有这一段模板（之前你多贴了一段导致 JS 炸掉）
         card.innerHTML = `
           <div style="display:flex; gap:12px; align-items:center">
-            <img src="${p.img ? encodeURI(p.img) : ''}"
+           <img src="${p.img ? safeImg(p.img) : ''}"
      alt=""
      style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:rgba(0,0,0,.2)"
-     onerror="this.src='images/placeholder.png'">
+     onerror="this.onerror=null; this.src='images/placeholder.png';">
+
 
             <div style="flex:1">
               <div class="name">${p.name}</div>

@@ -631,6 +631,16 @@ ${p.options ? `
     note: studentNote.value.trim(),
     spent: cartTotal(),
     remaining: remainingPoints(),
+
+// ⭐ 新增这一段（重点）
+  items: cartItems().map(it => ({
+    name: it.name,
+    qty: it.qty,
+    cost: it.cost,
+    subtotal: it.subtotal,
+    option: ""   // 以后你要记录口味/选项，我可以再帮你接
+  })),
+
     orderText
   };
 
